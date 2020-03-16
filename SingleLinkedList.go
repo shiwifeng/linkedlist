@@ -10,7 +10,7 @@ func NewSingleLinkedList() *singleLinkedList {
 }
 
 // 添加元素
-func (l1 *singleLinkedList) Add(index int, args ...interface{}) (error) {
+func (l1 *singleLinkedList) Add(index int, args ...interface{}) error {
 	// 1. 第一次添加
 	if l1.size == 0 {
 		l1.first = &node{}
@@ -121,13 +121,13 @@ func (l1 *singleLinkedList) Size() int {
 }
 
 // 根据索引设置元素
-func (l1 *singleLinkedList) Set(index int, element interface{}) (err error) {
+func (l1 *singleLinkedList) Set(index int, element interface{}) (interface{}, error) {
 	node, err := l1.node(index)
 	if err != nil {
-		return
+		return nil,err
 	}
 	node.data = element
-	return
+	return element,nil
 }
 
 // 移除元素

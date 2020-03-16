@@ -109,13 +109,13 @@ func (l3 *singleCircleLinkedList) Size() int {
 }
 
 // 根据索引设置元素
-func (l3 *singleCircleLinkedList) Set(index int, element interface{}) (err error) {
+func (l3 *singleCircleLinkedList) Set(index int, element interface{}) (interface{}, error) {
 	node, err := l3.node(index)
 	if err != nil {
-		return
+		return nil,err
 	}
 	node.data = element
-	return
+	return element,nil
 }
 
 // 获取元素对应的第一次的索引，暂时不支持获取引用类型元素的获取
