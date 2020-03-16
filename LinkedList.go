@@ -1,9 +1,5 @@
 package mylinked
 
-import (
-	"reflect"
-)
-
 // 双向链表
 type linkedList struct {
 	linkedNode
@@ -129,43 +125,8 @@ func (l2 *linkedList) Get(index int) (interface{}, error) {
 }
 
 // 获取元素对应的第一次的索引，暂时不支持获取引用类型元素的获取
-func (l2 *linkedList) IndexOf(element interface{}) (int) {
-	node1 := l2.first
-	node2 := l2.last
-	lastNum := l2.size
-	svg := (l2.size - 1) >> 1 // 边界
-	if element == nil {
-		for i := 0; i < l2.size; i++ {
-			if i > svg {
-				break
-			}
-			lastNum--
-			if node1.data == nil {
-				return i
-			}
-			if node2.data == nil {
-				return lastNum
-			}
-			node1 = node1.next
-			node2 = node2.prev
-		}
-	} else {
-		for i := 0; i < l2.size; i++ {
-			if i > svg {
-				break
-			}
-			lastNum--
-			if reflect.DeepEqual(element, node1.data) {
-				return i
-			}
-			if reflect.DeepEqual(element, node2.data) {
-				return lastNum
-			}
-			node1 = node1.next
-			node2 = node2.prev
-		}
-	}
-	return ELEMENT_NOT_FOUND
+func (l2 *linkedList) IndexOf(element interface{}) int {
+	return indexOf(element, &l2.linkedNode)
 }
 
 // 获取元素的容量
@@ -174,58 +135,63 @@ func (l2 *linkedList) Size() int {
 }
 
 // 根据索引设置元素
-func (l2 *linkedList) Set(index int, element interface{}) (err error) {
+func (l2 *linkedList) Set(index int, element interface{}) (interface{}, error) {
 	node, err := l2.node(index)
 	if err != nil {
-		return
+		return nil, err
 	}
 	node.data = element
-	return
+	return element, err
 }
 
 // 移除元素
-func (l2 *linkedList) Remove(index int) error {
+func (l2 *linkedList) Remove(index int) (interface{}, error) {
 	err := rangeCheck(index, l2.size)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	// 1. 移除第一个元素
+	// 0. 容量为1，直接清空
+	if l2.size == 1 {
+		element := l2.first.data
+		l2.Clear()
+		return element, nil
+	}
+	// 1. 移除第一个节点
 	if index == 0 {
-		// 1.1 获取第二个元素，先保存
+		// 0. 保存被移除的元素
+		element := l2.first.data
+		// 1.1 获取第二个节点，先保存
 		// 1.2 入口元素指向 1.1 的元素
-		node, err := l2.node(1)
-		if err != nil {
-			return err
-		}
+		node := l2.first.next
 		node.prev = nil
 		l2.first = node
 		l2.size--
-		return nil
+		return element, nil
 	}
 	// 2. 移除最后的元素
 	if index == l2.size-1 {
-		node, err := l2.node(l2.size - 2)
-		if err != nil {
-			return err
-		}
+		// 0. 保存被移除的元素
+		element := l2.last.data
+		node := l2.last.prev
 		node.next = nil
 		l2.last = node
 		l2.size--
-		return nil
+		return element, nil
 	}
 	// 3. 移除中间的元素
-	firstNode, err := l2.node(index - 1)
+	// 3.1. 保存被移除的元素
+	node, err := l2.node(index)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	tailNode, err := l2.node(index + 1)
-	if err != nil {
-		return err
-	}
+	// 3.2 移除的节点前一个
+	firstNode := node.prev
+	// 3.3 移除的节点后一个
+	tailNode := node.next
 	firstNode.next = tailNode
 	tailNode.prev = firstNode
 	l2.size--
-	return nil
+	return node.data, nil
 }
 
 // 获取index位置对应的节点对象

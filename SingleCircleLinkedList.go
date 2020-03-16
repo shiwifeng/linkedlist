@@ -120,56 +120,64 @@ func (l3 *singleCircleLinkedList) Set(index int, element interface{}) (err error
 
 // 获取元素对应的第一次的索引，暂时不支持获取引用类型元素的获取
 func (l3 *singleCircleLinkedList) IndexOf(element interface{}) int {
-	return singleIndexOf(element,&l3.singleLinkedNode)
+	return singleIndexOf(element, &l3.singleLinkedNode)
 }
 
 // 移除元素
-func (l3 *singleCircleLinkedList) Remove(index int) error {
+func (l3 *singleCircleLinkedList) Remove(index int) (interface{}, error) {
 	err := rangeCheck(index, l3.size)
 	if err != nil {
-		return err
+		return nil, err
+	}
+	// 0. 容量为1，直接清空
+	if l3.size == 1 {
+		element := l3.first.data
+		l3.Clear()
+		return element, nil
 	}
 	// 1. 移除第一个元素
 	if index == 0 {
+		// 0. 保存被移除的元素
+		element := l3.first.data
 		// 1.1 获取第二个元素，先保存
 		// 1.2 入口元素指向 1.1 的元素
-		l3.first, err = l3.node(1)
-		if err != nil {
-			return err
-		}
+		l3.first = l3.first.next
 		l3.size--
 		// 1.3 最后的元素的next，指向第一个
 		endNode, err := l3.node(l3.size - 1)
 		if err != nil {
 			l3.Clear()
-			return err
+			return nil, err
 		}
 		endNode.next = l3.first
-		return nil
+		return element, nil
 	}
 	// 2. 移除最后的元素
 	if index == l3.size-1 {
 		node, err := l3.node(l3.size - 2)
 		if err != nil {
-			return err
+			return nil, err
 		}
-		// 2.1 最后的元素的next，指向第一个
+		// 2.0. 保存被移除的元素
+		element := node.next.data
+		// 2.1 最后的元素的next，指向第一个节点
 		node.next = l3.first
 		l3.size--
-		return nil
+		return element, nil
 	}
 	// 3. 移除中间的元素
+	// 3.1 移除的节点前一个
 	firstNode, err := l3.node(index - 1)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	tailNode, err := l3.node(index + 1)
-	if err != nil {
-		return err
-	}
+	// 3.2 保存移除的元素
+	element := firstNode.next.data
+	// 3.3 移除的节点后一个
+	tailNode := firstNode.next.next
 	firstNode.next = tailNode
 	l3.size--
-	return nil
+	return element, nil
 }
 
 func (l3 *singleCircleLinkedList) append(args []interface{}, index int, a ...interface{}) error {

@@ -131,44 +131,50 @@ func (l1 *singleLinkedList) Set(index int, element interface{}) (err error) {
 }
 
 // 移除元素
-func (l1 *singleLinkedList) Remove(index int) error {
+func (l1 *singleLinkedList) Remove(index int) (interface{}, error) {
 	err := rangeCheck(index, l1.size)
 	if err != nil {
-		return err
+		return nil, err
+	}
+	// 0. 容量为1，直接清空
+	if l1.size == 1 {
+		element := l1.first.data
+		l1.Clear()
+		return element, nil
 	}
 	// 1. 移除第一个元素
 	if index == 0 {
+		element := l1.first.data
 		// 1.1 获取第二个元素，先保存
 		// 1.2 入口元素指向 1.1 的元素
-		l1.first, err = l1.node(1)
-		if err != nil {
-			return err
-		}
+		l1.first = l1.first.next
 		l1.size--
-		return nil
+		return element, nil
 	}
 	// 2. 移除最后的元素
 	if index == l1.size-1 {
 		node, err := l1.node(l1.size - 2)
 		if err != nil {
-			return err
+			return nil, err
 		}
+		element := node.next.data
 		node.next = nil
 		l1.size--
-		return nil
+		return element, nil
 	}
-	// 3. 移除中间的元素
+	// 3. 移除中间的节点
+	// 3.1 移除的节点前一个
 	firstNode, err := l1.node(index - 1)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	tailNode, err := l1.node(index + 1)
-	if err != nil {
-		return err
-	}
+	// 3.2 移除的节点后一个
+	tailNode := firstNode.next.next
+	// 3.3 保存移除的元素
+	element := firstNode.data
 	firstNode.next = tailNode
 	l1.size--
-	return nil
+	return element, nil
 }
 
 // 获取index位置对应的节点对象

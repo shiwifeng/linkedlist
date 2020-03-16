@@ -81,3 +81,43 @@ func singleIndexOf(element interface{}, ls *singleLinkedNode) int {
 	}
 	return ELEMENT_NOT_FOUND
 }
+
+// ---------------双向链表共用方法------------------
+func indexOf(element interface{}, ls *linkedNode) int {
+	node1 := ls.first
+	node2 := ls.last
+	lastNum := ls.size
+	svg := (ls.size - 1) >> 1 // 边界
+	if element == nil {
+		for i := 0; i < ls.size; i++ {
+			if i > svg {
+				break
+			}
+			lastNum--
+			if node1.data == nil {
+				return i
+			}
+			if node2.data == nil {
+				return lastNum
+			}
+			node1 = node1.next
+			node2 = node2.prev
+		}
+	} else {
+		for i := 0; i < ls.size; i++ {
+			if i > svg {
+				break
+			}
+			lastNum--
+			if reflect.DeepEqual(element, node1.data) {
+				return i
+			}
+			if reflect.DeepEqual(element, node2.data) {
+				return lastNum
+			}
+			node1 = node1.next
+			node2 = node2.prev
+		}
+	}
+	return ELEMENT_NOT_FOUND
+}
