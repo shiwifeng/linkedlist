@@ -1,3 +1,3 @@
-module shiwifeng/linkedlist
+module linkedlist
 
 go 1.13
