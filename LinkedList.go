@@ -1,17 +1,17 @@
-package mylinked
+package linkedlist
 
 // 双向链表
-type linkedList struct {
+type LinkedList struct {
 	linkedNode
 }
 
 // 双向链表构造函数
-func NewLinkedList() *linkedList {
-	return &linkedList{}
+func NewLinkedList() *LinkedList {
+	return &LinkedList{}
 }
 
 // 添加元素
-func (l2 *linkedList) Add(index int, args ...interface{}) (error) {
+func (l2 *LinkedList) Add(index int, args ...interface{}) error {
 	// 1. 第一次添加
 	if l2.size == 0 {
 		l2.first = &nodes{}
@@ -36,55 +36,60 @@ func (l2 *linkedList) Add(index int, args ...interface{}) (error) {
 	// 3. 中间插入
 	if tmpIndex := l2.size - 1; index > 0 && index <= tmpIndex {
 		// 3.1 获取要插入的节点，先保存
-		newNode, err := l2.node(index)
+		nextNode, err := l2.node(index)
 		if err != nil {
 			return err
 		}
-		// 3.2 追加当前的父节点后面
-		err = l2.append(args, index-1, 1)
-		if err != nil {
-			return err
+		// 3.1.1 获取插入位置的上一个节点
+		frontNode := nextNode.prev
+		for i, v := range args {
+			// 1.1 构建节点
+			newNode := &nodes{}
+			newNode.data = v
+			// 1.2 构建节点指向步骤1.的节点
+			newNode.prev = frontNode
+			if i == len(args)-1 {
+				newNode.next = nextNode
+				nextNode.prev = newNode
+			}
+			// 1.3 步骤1.的节点的下一个节点指向刚构建的节点
+			frontNode.next = newNode
+			// 1.4 把当前的保存，让下一次循环变成父节点
+			frontNode = newNode
+			l2.size++
 		}
-		// 3.3 获取刚插入的最后节点，index-1+len(args): 步骤3.1的索引位置-1 + 已经插入的数量
-		nextNode, err := l2.node(index + len(args) - 1)
-		if err != nil {
-			l2.Clear()
-			return err
-		}
-		newNode.prev = nextNode
-		nextNode.next = newNode
 		return nil
 	}
 	// 4. 第一位插入
-	// 4.1 获取要插入的节点，先保存
-	newNode, err := l2.node(index)
-	if err != nil {
-		return err
-	}
-	// 4.2 更新入口，指向新插入的节点
-	l2.first = &nodes{}
-	l2.first.data = args[0]
-	l2.size++
-	// 4.3 批量追加
-	if len(args) > 1 {
-		err = l2.append(args[1:], 0, 1)
-		if err != nil {
-			l2.Clear()
-			return err
+	// 4.1 获取要首节点，先保存
+	nextNode := l2.first
+	frontNode := &nodes{}
+	for i, v := range args {
+		// 1.1 构建节点
+		newNode := &nodes{}
+		newNode.data = v
+		newNode.prev = frontNode
+		// 1.2 构建的是第一个，prev 指向最后一个节点，
+		// 最后一个节点的 enxt 指向入口节点第一个,形成双闭环
+		if i == 0 {
+			newNode.prev = nil
+			l2.first = newNode
+		} else {
+			if i == len(args)-1 {
+				newNode.next = nextNode
+				nextNode.prev = newNode
+			}
 		}
+		// 1.3 步骤1.的节点的下一个节点指向刚构建的节点
+		frontNode.next = newNode
+		// 1.4 把当前的保存，让下一次循环变成父节点
+		frontNode = newNode
+		l2.size++
 	}
-	// 4.4 获取刚插入的最后节点，index+len(args): 步骤3.1的索引位置 + 已经插入的数量
-	nextNode, err := l2.node(index + len(args) - 1)
-	if err != nil {
-		l2.Clear()
-		return err
-	}
-	newNode.prev = nextNode
-	nextNode.next = newNode
 	return nil
 }
 
-func (l2 *linkedList) append(args []interface{}, index int, a ...interface{}) error {
+func (l2 *LinkedList) append(args []interface{}, index int, a ...interface{}) error {
 	nextNode, err := l2.node(index) // 获取节点
 	if err != nil {
 		return err
@@ -109,14 +114,14 @@ func (l2 *linkedList) append(args []interface{}, index int, a ...interface{}) er
 }
 
 // 清除链表
-func (l2 *linkedList) Clear() {
+func (l2 *LinkedList) Clear() {
 	l2.first = nil
 	l2.size = 0
 	return
 }
 
 // 获取元素
-func (l2 *linkedList) Get(index int) (interface{}, error) {
+func (l2 *LinkedList) Get(index int) (interface{}, error) {
 	data, err := l2.node(index)
 	if err != nil {
 		return nil, err
@@ -125,17 +130,17 @@ func (l2 *linkedList) Get(index int) (interface{}, error) {
 }
 
 // 获取元素对应的第一次的索引，暂时不支持获取引用类型元素的获取
-func (l2 *linkedList) IndexOf(element interface{}) int {
+func (l2 *LinkedList) IndexOf(element interface{}) int {
 	return indexOf(element, &l2.linkedNode)
 }
 
 // 获取元素的容量
-func (l2 *linkedList) Size() int {
+func (l2 *LinkedList) Size() int {
 	return l2.size
 }
 
 // 根据索引设置元素
-func (l2 *linkedList) Set(index int, element interface{}) (interface{}, error) {
+func (l2 *LinkedList) Set(index int, element interface{}) (interface{}, error) {
 	node, err := l2.node(index)
 	if err != nil {
 		return nil, err
@@ -145,7 +150,7 @@ func (l2 *linkedList) Set(index int, element interface{}) (interface{}, error) {
 }
 
 // 移除元素
-func (l2 *linkedList) Remove(index int) (interface{}, error) {
+func (l2 *LinkedList) Remove(index int) (interface{}, error) {
 	err := rangeCheck(index, l2.size)
 	if err != nil {
 		return nil, err
@@ -195,7 +200,7 @@ func (l2 *linkedList) Remove(index int) (interface{}, error) {
 }
 
 // 获取index位置对应的节点对象
-func (l2 *linkedList) node(index int) (*nodes, error) {
+func (l2 *LinkedList) node(index int) (*nodes, error) {
 	err := rangeCheck(index, l2.size)
 	if err != nil {
 		return nil, err

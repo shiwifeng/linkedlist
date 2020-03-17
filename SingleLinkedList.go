@@ -1,16 +1,16 @@
-package mylinked
+package linkedlist
 
-type singleLinkedList struct {
+type SingleLinkedList struct {
 	singleLinkedNode
 }
 
 // 单向链表构造函数
-func NewSingleLinkedList() *singleLinkedList {
-	return &singleLinkedList{}
+func NewSingleLinkedList() *SingleLinkedList {
+	return &SingleLinkedList{}
 }
 
 // 添加元素
-func (l1 *singleLinkedList) Add(index int, args ...interface{}) error {
+func (l1 *SingleLinkedList) Add(index int, args ...interface{}) error {
 	// 1. 第一次添加
 	if l1.size == 0 {
 		l1.first = &node{}
@@ -79,7 +79,7 @@ func (l1 *singleLinkedList) Add(index int, args ...interface{}) error {
 	return nil
 }
 
-func (l1 *singleLinkedList) append(args []interface{}, index int) error {
+func (l1 *SingleLinkedList) append(args []interface{}, index int) error {
 	nextNode, err := l1.node(index) // 获取节点
 	if err != nil {
 		return err
@@ -95,14 +95,14 @@ func (l1 *singleLinkedList) append(args []interface{}, index int) error {
 }
 
 // 清除链表
-func (l1 *singleLinkedList) Clear() {
+func (l1 *SingleLinkedList) Clear() {
 	l1.first = nil
 	l1.size = 0
 	return
 }
 
 // 获取元素
-func (l1 *singleLinkedList) Get(index int) (interface{}, error) {
+func (l1 *SingleLinkedList) Get(index int) (interface{}, error) {
 	data, err := l1.node(index)
 	if err != nil {
 		return nil, err
@@ -111,27 +111,27 @@ func (l1 *singleLinkedList) Get(index int) (interface{}, error) {
 }
 
 // 获取元素对应的第一次的索引，暂时不支持获取引用类型元素的获取
-func (l1 *singleLinkedList) IndexOf(element interface{}) int {
+func (l1 *SingleLinkedList) IndexOf(element interface{}) int {
 	return singleIndexOf(element, &l1.singleLinkedNode)
 }
 
 // 获取元素的容量
-func (l1 *singleLinkedList) Size() int {
+func (l1 *SingleLinkedList) Size() int {
 	return l1.size
 }
 
 // 根据索引设置元素
-func (l1 *singleLinkedList) Set(index int, element interface{}) (interface{}, error) {
+func (l1 *SingleLinkedList) Set(index int, element interface{}) (interface{}, error) {
 	node, err := l1.node(index)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 	node.data = element
-	return element,nil
+	return element, nil
 }
 
 // 移除元素
-func (l1 *singleLinkedList) Remove(index int) (interface{}, error) {
+func (l1 *SingleLinkedList) Remove(index int) (interface{}, error) {
 	err := rangeCheck(index, l1.size)
 	if err != nil {
 		return nil, err
@@ -178,7 +178,7 @@ func (l1 *singleLinkedList) Remove(index int) (interface{}, error) {
 }
 
 // 获取index位置对应的节点对象
-func (l1 *singleLinkedList) node(index int) (*node, error) {
+func (l1 *SingleLinkedList) node(index int) (*node, error) {
 	err := rangeCheck(index, l1.size)
 	if err != nil {
 		return nil, err

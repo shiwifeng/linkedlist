@@ -1,15 +1,15 @@
-package mylinked
+package linkedlist
 
-type singleCircleLinkedList struct {
+type SingleCircleLinkedList struct {
 	singleLinkedNode
 }
 
-func NewSingleCircleLinkedList() *singleCircleLinkedList {
-	return &singleCircleLinkedList{}
+func NewSingleCircleLinkedList() *SingleCircleLinkedList {
+	return &SingleCircleLinkedList{}
 }
 
 // 添加元素
-func (l3 *singleCircleLinkedList) Add(index int, args ...interface{}) error {
+func (l3 *SingleCircleLinkedList) Add(index int, args ...interface{}) error {
 	// 1. 第一次添加
 	if l3.size == 0 {
 		l3.first = &node{}
@@ -88,14 +88,14 @@ func (l3 *singleCircleLinkedList) Add(index int, args ...interface{}) error {
 }
 
 // 清空链表
-func (l3 *singleCircleLinkedList) Clear() {
+func (l3 *SingleCircleLinkedList) Clear() {
 	l3.first = nil
 	l3.size = 0
 	return
 }
 
 // 根据索引获取元素
-func (l3 *singleCircleLinkedList) Get(index int) (interface{}, error) {
+func (l3 *SingleCircleLinkedList) Get(index int) (interface{}, error) {
 	data, err := l3.node(index)
 	if err != nil {
 		return nil, err
@@ -104,27 +104,27 @@ func (l3 *singleCircleLinkedList) Get(index int) (interface{}, error) {
 }
 
 // 获取元素的容量
-func (l3 *singleCircleLinkedList) Size() int {
+func (l3 *SingleCircleLinkedList) Size() int {
 	return l3.size
 }
 
 // 根据索引设置元素
-func (l3 *singleCircleLinkedList) Set(index int, element interface{}) (interface{}, error) {
+func (l3 *SingleCircleLinkedList) Set(index int, element interface{}) (interface{}, error) {
 	node, err := l3.node(index)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 	node.data = element
-	return element,nil
+	return element, nil
 }
 
 // 获取元素对应的第一次的索引，暂时不支持获取引用类型元素的获取
-func (l3 *singleCircleLinkedList) IndexOf(element interface{}) int {
+func (l3 *SingleCircleLinkedList) IndexOf(element interface{}) int {
 	return singleIndexOf(element, &l3.singleLinkedNode)
 }
 
 // 移除元素
-func (l3 *singleCircleLinkedList) Remove(index int) (interface{}, error) {
+func (l3 *SingleCircleLinkedList) Remove(index int) (interface{}, error) {
 	err := rangeCheck(index, l3.size)
 	if err != nil {
 		return nil, err
@@ -180,7 +180,7 @@ func (l3 *singleCircleLinkedList) Remove(index int) (interface{}, error) {
 	return element, nil
 }
 
-func (l3 *singleCircleLinkedList) append(args []interface{}, index int, a ...interface{}) error {
+func (l3 *SingleCircleLinkedList) append(args []interface{}, index int, a ...interface{}) error {
 	nextNode, err := l3.node(index) // 获取节点
 	if err != nil {
 		return err
@@ -201,7 +201,7 @@ func (l3 *singleCircleLinkedList) append(args []interface{}, index int, a ...int
 }
 
 // 获取index位置对应的节点对象
-func (l3 *singleCircleLinkedList) node(index int) (*node, error) {
+func (l3 *SingleCircleLinkedList) node(index int) (*node, error) {
 	err := rangeCheck(index, l3.size)
 	if err != nil {
 		return nil, err

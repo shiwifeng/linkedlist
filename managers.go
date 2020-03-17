@@ -1,4 +1,4 @@
-package mylinked
+package linkedlist
 
 import (
 	"fmt"
@@ -34,16 +34,6 @@ type linkedNode struct {
 	size  int    // 元素的长度
 	first *nodes // 头入口节点
 	last  *nodes //尾入口节点
-}
-
-type SwfengLinkedList interface {
-	Clear()                           // 清空链表
-	Get(int) interface{}              // 根据索引获取链表的元素
-	Set(int, interface{}) interface{} // 根据索引修改元素
-	Add(int, ...interface{}) int      // 添加元素
-	Remove(int) interface{}           // 根据索引移除元素
-	IndexOf(interface{}) int          //根据元素获取索引
-	Size() int                        // 获取元素数量
 }
 
 const (

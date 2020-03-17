@@ -1,16 +1,16 @@
-package mylinked
+package linkedlist
 
-type circleLinkedList struct {
+type CircleLinkedList struct {
 	linkedNode
 }
 
 // 双向环形构造函数
-func NewCircleLinkedList() *circleLinkedList {
-	return &circleLinkedList{}
+func NewCircleLinkedList() *CircleLinkedList {
+	return &CircleLinkedList{}
 }
 
 // 添加元素
-func (l4 *circleLinkedList) Add(index int, args ...interface{}) error {
+func (l4 *CircleLinkedList) Add(index int, args ...interface{}) error {
 	// 1. 第一次添加
 	if l4.size == 0 {
 		l4.first = &nodes{}
@@ -91,10 +91,7 @@ func (l4 *circleLinkedList) Add(index int, args ...interface{}) error {
 			return err
 		}
 		// 3.1.1 获取插入位置的上一个节点
-		frontNode, err := l4.node(index - 1)
-		if err != nil {
-			return err
-		}
+		frontNode := nextNode.prev
 		for i, v := range args {
 			// 1.1 构建节点
 			newNode := &nodes{}
@@ -145,19 +142,19 @@ func (l4 *circleLinkedList) Add(index int, args ...interface{}) error {
 }
 
 // 清除链表
-func (l4 *circleLinkedList) Clear() {
+func (l4 *CircleLinkedList) Clear() {
 	l4.first = nil
 	l4.size = 0
 	return
 }
 
 // 获取元素对应的第一次的索引，暂时不支持获取引用类型元素的获取
-func (l4 *circleLinkedList) IndexOf(element interface{}) (int) {
+func (l4 *CircleLinkedList) IndexOf(element interface{}) int {
 	return indexOf(element, &l4.linkedNode)
 }
 
 // 获取元素
-func (l4 *circleLinkedList) Get(index int) (interface{}, error) {
+func (l4 *CircleLinkedList) Get(index int) (interface{}, error) {
 	data, err := l4.node(index)
 	if err != nil {
 		return nil, err
@@ -166,12 +163,12 @@ func (l4 *circleLinkedList) Get(index int) (interface{}, error) {
 }
 
 // 获取元素的容量
-func (l4 *circleLinkedList) Size() int {
+func (l4 *CircleLinkedList) Size() int {
 	return l4.size
 }
 
 // 根据索引设置元素
-func (l4 *circleLinkedList) Set(index int, element interface{}) (interface{}, error) {
+func (l4 *CircleLinkedList) Set(index int, element interface{}) (interface{}, error) {
 	node, err := l4.node(index)
 	if err != nil {
 		return nil, err
@@ -181,7 +178,7 @@ func (l4 *circleLinkedList) Set(index int, element interface{}) (interface{}, er
 }
 
 // 移除元素
-func (l4 *circleLinkedList) Remove(index int) (interface{}, error) {
+func (l4 *CircleLinkedList) Remove(index int) (interface{}, error) {
 	err := rangeCheck(index, l4.size)
 	if err != nil {
 		return nil, err
@@ -235,7 +232,7 @@ func (l4 *circleLinkedList) Remove(index int) (interface{}, error) {
 }
 
 // 获取index位置对应的节点对象
-func (l4 *circleLinkedList) node(index int) (*nodes, error) {
+func (l4 *CircleLinkedList) node(index int) (*nodes, error) {
 	err := rangeCheck(index, l4.size)
 	if err != nil {
 		return nil, err
